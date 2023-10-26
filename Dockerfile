@@ -16,7 +16,7 @@ FROM build AS staging
 # docker run -d --rm -p 5173:5173 react-vite
 ENTRYPOINT ["npm", "run", "dev"]
 
-FROM nginx:stable-alpine
+FROM nginx:stable-alpine AS final
 
 # prepare bundled frontend
 COPY --from=build /app/dist /usr/share/nginx/html
