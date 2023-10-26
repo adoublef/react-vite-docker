@@ -1,4 +1,4 @@
-FROM node AS build
+FROM node AS base
 
 WORKDIR /app 
 
@@ -8,14 +8,18 @@ COPY *.json .
 RUN npm ci 
 
 COPY . .
-RUN npm run build
 
-FROM build AS staging
-
-# docker build -t react-vite .
+# 
+FROM base AS staging
+# docker build -t react-vite . --target staging
 # docker run -d --rm -p 5173:5173 react-vite
 ENTRYPOINT ["npm", "run", "dev"]
 
+# build the javascript bundle
+FROM base as build
+RUN npm run build
+
+# deploy using nginx
 FROM nginx:stable-alpine AS final
 
 # prepare bundled frontend
